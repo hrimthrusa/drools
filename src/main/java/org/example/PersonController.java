@@ -1,26 +1,29 @@
 package org.example;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Random;
+
+@RequiredArgsConstructor
 @RestController
 public class PersonController {
 
-    @Autowired
-    private PersonProducer personProducer;
+    private final PersonProducer personProducer;
 
-    @Autowired
-    private PersonService personService;
+    private final PersonService personService;
+
+    private final Random random = new Random();
 
     @GetMapping("/sendPerson")
     public String sendPerson() {
-        personProducer.sendPerson("John Doe", 30);
+        personProducer.sendPerson("John Doe", random.nextInt(36));
         return "Person sent!";
     }
-
 
     @PostMapping("/validate-person")
     public String validatePerson(@RequestBody Person person) {
@@ -32,4 +35,5 @@ public class PersonController {
             return "Validation failed: " + ex.getMessage();
         }
     }
+
 }
