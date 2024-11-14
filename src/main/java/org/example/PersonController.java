@@ -29,8 +29,11 @@ public class PersonController {
     public String validatePerson(@RequestBody Person person) {
         try {
             // Проверка бизнес-правил с помощью Drools
-            personService.isAdult(person);
-            return "Person is valid!";
+            boolean isAdult = personService.isAdult(person);
+            if(isAdult)
+                return "Person is valid!";
+            else
+                return "Person is just a child!";
         } catch (IllegalArgumentException ex) {
             return "Validation failed: " + ex.getMessage();
         }

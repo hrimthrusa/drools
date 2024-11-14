@@ -20,7 +20,6 @@ public class PersonConsumer {
     @RabbitListener(queues = "personQueue")
     public void receivePerson(@Payload Person person) {
         log.info("Received: [{}]", person);
-        personService.isAdult(person);
         var resp = restTemplate.postForEntity(RestConfig.URL_VALIDATE_PERSON, person, String.class);
         log.info("Sent to server: [{}] got response: [{}]", person,resp);
     }
