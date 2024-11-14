@@ -7,6 +7,8 @@ import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.MessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,7 +18,6 @@ public class RabbitConfig {
 
     public static final String QUEUE_NAME = "personQueue";
     public static final String EXCHANGE_NAME = "personExchange";
-    public static final String ROUTING_KEY = "person.key";
 
     @Bean
     public Queue personQueue() {
@@ -29,27 +30,14 @@ public class RabbitConfig {
     }
 
     @Bean
-    public Binding personQueueBinding() {
-        return BindingBuilder.bind(personQueue())
-                .to(personExchange())
-                .with(ROUTING_KEY);
-    }
-
-    @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-        return new RabbitTemplate(connectionFactory);
+       var template = new RabbitTemplate(connectionFactory);
+       template.setMessageConverter(messageConverter());
+       return template;
     }
 
     @Bean
-    public MessageListenerContainer messageListenerContainer(ConnectionFactory connectionFactory) {
-        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        container.setMessageListener(message -> {
-            // Логика обработки полученного сообщения
-            System.out.println("Received: " + new String(message.getBody()));
-        });
-        container.setQueues(personQueue());
-        return container;
+    public MessageConverter messageConverter() {
+        return new Jackson2JsonMessageConverter();
     }
-
 }

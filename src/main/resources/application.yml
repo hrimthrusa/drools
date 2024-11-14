@@ -11,4 +11,4 @@ spring:
         max-concurrency: 10
 
 server:
-  port=8085:
+  port: 8085
