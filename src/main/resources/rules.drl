@@ -7,7 +7,6 @@ rule "Check if person is adult"
     when
         person : Person(age >= 18)
     then
-        System.out.println("Rule is firing for person: " + person.name);
         person.adult = true;
         System.out.println("Person adult status set to true");
 end

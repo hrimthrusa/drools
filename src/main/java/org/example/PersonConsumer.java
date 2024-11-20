@@ -1,24 +1,24 @@
 package org.example;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.config.RestConfig;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class PersonConsumer {
 
-    private final ObjectMapper objectMapper;
-
-    public PersonConsumer(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
+    private final RestTemplate restTemplate;
 
     @RabbitListener(queues = "personQueue")
-    public void receivePerson(String personJson) {
-        try {
-            Person person = objectMapper.readValue(personJson, Person.class);
-            System.out.println("Received person: " + person.getName() + ", Age: " + person.getAge());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void receivePerson(@Payload Person person) {
+        log.info("Received: [{}]", person);
+        var resp = restTemplate.postForEntity(RestConfig.URL_VALIDATE_PERSON, person, String.class);
+        log.info("Sent to server: [{}] got response: [{}]", person,resp);
     }
 }
