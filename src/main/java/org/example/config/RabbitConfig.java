@@ -17,17 +17,12 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitConfig {
 
     public static final String QUEUE_NAME = "personQueue";
-    public static final String EXCHANGE_NAME = "personExchange";
 
     @Bean
     public Queue personQueue() {
         return new Queue(QUEUE_NAME, true); // true - очередь персистентная
     }
 
-    @Bean
-    public TopicExchange personExchange() {
-        return ExchangeBuilder.topicExchange(EXCHANGE_NAME).durable(true).build();
-    }
 
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {

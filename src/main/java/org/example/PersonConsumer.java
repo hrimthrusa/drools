@@ -13,8 +13,6 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class PersonConsumer {
 
-    private final PersonService personService;
-
     private final RestTemplate restTemplate;
 
     @RabbitListener(queues = "personQueue")
